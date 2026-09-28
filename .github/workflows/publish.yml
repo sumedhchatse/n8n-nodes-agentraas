@@ -1,0 +1,26 @@
+# Publishes this package to npm with a provenance statement, which n8n
+# requires before listing a community node. Runs on a tag like v0.1.3.
+# Auth is npm trusted publishing: the package's npmjs.com settings name
+# this repo and this workflow file, so no token is stored anywhere.
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish --provenance --access public
